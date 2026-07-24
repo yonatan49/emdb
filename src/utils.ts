@@ -1,6 +1,20 @@
+import type { LucideIcon } from "lucide-react";
 import { PanelsTopLeft } from "lucide-react";
 
-export const Menus = [
+export type SubMenuItem = {
+    name: string;
+    description?: string;
+    icon?: LucideIcon;
+};
+
+export type MenuItem = {
+    name: string;
+    subMenuHeading?: string[];
+    subMenu?: SubMenuItem[];
+    gridCols?: 1 | 2 | 3;
+};
+
+export const Menus: MenuItem[] = [
     {
         name: "Movies",
         subMenuHeading: ["Sub Menu 1", "Sub Menu 2"],

@@ -3,7 +3,26 @@ import Logo from "../assets/logo.png"
 import { Menus } from "../utils.ts"
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { div } from "framer-motion/client";
+
+type SubMenuItem = {
+    name: string;
+    description?: string;
+    icon?: any;
+};
+
+type MenuItem = {
+    name: string;
+    subMenu?: SubMenuItem[];
+    gridCols?: number;
+};
+
+type DesktopMenuProps = {
+    menu: MenuItem;
+};
+
+type MobileMenuProps = {
+    Menus: MenuItem[];
+};
 
 export function Navbar() {
     return (
@@ -22,7 +41,7 @@ export function Navbar() {
                     <div className="flex items-center gap-x-5">
                         <button className="bg-white/5 z-999 relative px-3 py-1.5 shadow rounded-xl flex items-center cursor-pointer">Sign In</button>
                         <div className="lg:hidden">
-                            <MobileMenu menu={Menus} />
+                            <MobileMenu Menus={Menus} />
                         </div>
                     </div>
                 </nav>
@@ -31,7 +50,7 @@ export function Navbar() {
     )
 }
 
-function DesktopMenu({ menu }) {
+function DesktopMenu({ menu }: DesktopMenuProps) {
     const [isHovered, setIsHovered] = useState(false);
     const toggleHover = () => setIsHovered(!isHovered);
     const subMenuAnimation = {
@@ -39,7 +58,7 @@ function DesktopMenu({ menu }) {
         exit: { opacity: 0, rotateX: -15, transition: { duration: 0.5 }, display: "none" }
     }
 
-    const hasSubMenu = menu?.subMenu?.length > 0;
+    const hasSubMenu = (menu?.subMenu?.length ?? 0) > 0;
     return (
         <motion.li className="relative group/link" whileHover={{ scale: 1.05 }} transition={{ duration: 0.2 }} onHoverStart={toggleHover} onHoverEnd={toggleHover}>
             <span className="flex items-center gap-1 cursor-pointer px-3 py-1 rounded-xl hover:bg-white/5 ">
@@ -77,29 +96,56 @@ function DesktopMenu({ menu }) {
     )
 }
 
-function MobileMenu({ Menus }) {
+function MobileMenu({ Menus }: MobileMenuProps) {
     const [isOpen, setIsOpen] = useState(false);
-    const toggleDrawer = () => setIsOpen(!isOpen);
+    const [clicked, setClicked] = useState<number | null>(null);
+
+    const toggleDrawer = () => {
+        setIsOpen(!isOpen);
+        setClicked(null);
+    };
+
+    const subMenuDrawer = {
+        enter: { height: "auto", overflow: "hidden" },
+        exit: { height: 0, overflow: "hidden" }
+    }
+
     return (
         <div>
             <button onClick={toggleDrawer} className="z-999 relative">{isOpen ? <X /> : <Menu />}</button>
-            <div className="fixed left-0 right-0 top-16 overflow-y-auto h-full bg-[#18181A] backdrop-blur text-white p-6">
+
+            <motion.div initial={{ y: "-100%" }} animate={{ y: isOpen ? "0%" : "-100%" }} className="fixed left-0 right-0 top-16 overflow-y-auto h-full bg-[#18181A] backdrop-blur text-white p-6">
                 <ul>
                     {
                         Menus?.map(({ name, subMenu }, i) => {
-                            const hasSubMenu = subMenu?.length > 0;
+                            const hasSubMenu = (subMenu?.length ?? 0) > 0;
+                            const isClicked = clicked === i;
                             return (
                                 <li key={name}>
-                                    <span>
+                                    <span className="flex items-center justify-between p-4 hover:bg-white/5 rounded-md cursor-pointer relative"
+                                        onClick={() => setClicked(isClicked ? null : i)}
+                                    >
                                         {name}
-                                        {hasSubMenu && <ChevronDown />}
+                                        {hasSubMenu && <ChevronDown className={`ml-auto ${isClicked && "rotate-180"}`} />}
                                     </span>
+                                    {
+                                        hasSubMenu && isClicked && (
+                                            <motion.ul initial="exit" animate={isClicked ? "enter" : "exit"} variants={subMenuDrawer} className="ml-5">
+                                                {subMenu?.map(({ name, icon: Icon }) => (
+                                                    <li key={name} className="p-2 flex items-center hover:bg-white/5 rounded-md cursor-pointer gap-x-2">
+                                                        <Icon size={17} />
+                                                        <span className="ml-2">{name}</span>
+                                                    </li>
+                                                ))}
+                                            </motion.ul>
+                                        )
+                                    }
                                 </li>
                             )
                         })
                     }
                 </ul>
-            </div>
+            </motion.div>
         </div>
     );
 }
