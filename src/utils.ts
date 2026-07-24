@@ -65,7 +65,7 @@ export const Menus = [
                 icon: PanelsTopLeft
             }
         ],
-        gridCols: 2,
+        gridCols: 1,
     },
     {
         name: "TV Shows",

@@ -1,8 +1,9 @@
-import { ChevronDown } from "lucide-react";
+import { ChevronDown, Menu, X } from "lucide-react";
 import Logo from "../assets/logo.png"
 import { Menus } from "../utils.ts"
 import { useState } from "react";
 import { motion } from "framer-motion";
+import { div } from "framer-motion/client";
 
 export function Navbar() {
     return (
@@ -20,6 +21,9 @@ export function Navbar() {
                     </ul>
                     <div className="flex items-center gap-x-5">
                         <button className="bg-white/5 z-999 relative px-3 py-1.5 shadow rounded-xl flex items-center cursor-pointer">Sign In</button>
+                        <div className="lg:hidden">
+                            <MobileMenu menu={Menus} />
+                        </div>
                     </div>
                 </nav>
             </header>
@@ -31,24 +35,23 @@ function DesktopMenu({ menu }) {
     const [isHovered, setIsHovered] = useState(false);
     const toggleHover = () => setIsHovered(!isHovered);
     const subMenuAnimation = {
-        enter: {opacity: 1, rotateX: 0, transition: {duration: 0.5}, display: "block"},
-        exit: {opacity: 0, rotateX: -15, transition: {duration: 0.5}, display: "none"}
+        enter: { opacity: 1, rotateX: 0, transition: { duration: 0.5 }, display: "block" },
+        exit: { opacity: 0, rotateX: -15, transition: { duration: 0.5 }, display: "none" }
     }
 
     const hasSubMenu = menu?.subMenu?.length > 0;
     return (
-        <motion.li className="group/link" whileHover={{ scale: 1.05 }} transition={{ duration: 0.2 }} onHoverStart={toggleHover} onHoverEnd={toggleHover}>
+        <motion.li className="relative group/link" whileHover={{ scale: 1.05 }} transition={{ duration: 0.2 }} onHoverStart={toggleHover} onHoverEnd={toggleHover}>
             <span className="flex items-center gap-1 cursor-pointer px-3 py-1 rounded-xl hover:bg-white/5 ">
                 {menu.name}
                 {hasSubMenu && (<ChevronDown className="mt-[0.6px] group-hover/link:rotate-180 duration-200" />)}
             </span>
             {hasSubMenu && (
-                <motion.div className="absolute top-[4.2rem] p-3.75 rounded-md origin-[50%_-170px] backdrop-blur bg-white/4" initial="exit" animate={isHovered ? "enter" : "exit"} variants={subMenuAnimation}>
+                <motion.div className="absolute w-max max-w-170 top-[4.2rem] p-3.75 rounded-md origin-[50%_-170px] backdrop-blur bg-white/4" initial="exit" animate={isHovered ? "enter" : "exit"} variants={subMenuAnimation}>
                     <div className={`
                             grid gap-7
-                            ${
-                                menu.gridCols === 3 ? "grid-cols-3" : menu.gridCols === 2 ? "grid-cols-2" : "grid-cols-1"
-                            }
+                            ${menu.gridCols === 3 ? "grid-cols-3" : menu.gridCols === 2 ? "grid-cols-2" : "grid-cols-1"
+                        }
                         `}>
                         {menu?.subMenu?.map((subMenu, i) => (
                             <div key={i} className="relative cursor-pointer">
@@ -72,4 +75,31 @@ function DesktopMenu({ menu }) {
             }
         </motion.li>
     )
+}
+
+function MobileMenu({ Menus }) {
+    const [isOpen, setIsOpen] = useState(false);
+    const toggleDrawer = () => setIsOpen(!isOpen);
+    return (
+        <div>
+            <button onClick={toggleDrawer} className="z-999 relative">{isOpen ? <X /> : <Menu />}</button>
+            <div className="fixed left-0 right-0 top-16 overflow-y-auto h-full bg-[#18181A] backdrop-blur text-white p-6">
+                <ul>
+                    {
+                        Menus?.map(({ name, subMenu }, i) => {
+                            const hasSubMenu = subMenu?.length > 0;
+                            return (
+                                <li key={name}>
+                                    <span>
+                                        {name}
+                                        {hasSubMenu && <ChevronDown />}
+                                    </span>
+                                </li>
+                            )
+                        })
+                    }
+                </ul>
+            </div>
+        </div>
+    );
 }
