@@ -17,7 +17,7 @@ export type MenuItem = {
 export const Menus: MenuItem[] = [
     {
         name: "Movies",
-        subMenuHeading: ["Sub Menu 1", "Sub Menu 2"],
+        subMenuHeading: ["Sub headq", "Sub Menu 2"],
         subMenu: [
             {
                 name: "Sub Menu 1",

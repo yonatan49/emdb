@@ -4,7 +4,9 @@ function App() {
   return (
     <div>
       <Navbar />
-      APP
+      <div className="pt-16">
+        EMDb APP
+      </div>
     </div>
   )
 }
