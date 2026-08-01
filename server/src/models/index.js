@@ -1,0 +1,11 @@
+export { default as userModel } from "./userModel.js";
+export { default as personModel } from "./personModel.js";
+export { default as genreModel } from "./genreModel.js";
+export { default as companyModel } from "./companyModel.js";
+export { default as movieModel } from "./movieModel.js";
+export { default as episodeModel } from "./episodeModel.js";
+export { default as ratingModel } from "./ratingModel.js";
+export { default as reviewModel } from "./reviewModel.js";
+export { default as watchlistModel } from "./watchlistModel.js";
+export { default as awardModel } from "./awardModel.js";
+export { default as movieAwardModel } from "./movieAwardModel.js";
